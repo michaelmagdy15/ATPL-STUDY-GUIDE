@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATPL Study Guide: Exam vs. QB %</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Add icons library for the info box -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <style>
+        /* Use the Inter font */
+        body {
+            font-family: "Inter", sans-serif;
+        }
+        /* Custom styles for a nicer dropdown */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236B7280%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-13%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2013l128%20128c3.6%203.6%207.8%205.4%2013%205.4s9.4-1.8%2013-5.4l128-128c3.6-3.6%205.4-7.8%205.4-13%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 0.8em;
+            padding-right: 2.5rem; /* Make space for arrow */
+        }
+        .dark select {
+             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23D1D5DB%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-13%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2013l128%20128c3.6%203.6%207.8%205.4%2013%205.4s9.4-1.8%2013-5.4l128-128c3.6-3.6%205.4-7.8%205.4-13%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <div class="p-6 md:p-10">
+            <!-- Header -->
+            <h1 class="text-3xl md:text-4xl font-bold text-center text-blue-600 dark:text-blue-400">
+                ATPL(A) Study Guide
+            </h1>
+            
+            <!-- Subject Selector -->
+            <div class="mt-8 max-w-md mx-auto">
+                <label for="subjectSelector" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Subject:</label>
+                <select id="subjectSelector" class="block w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg font-medium">
+                    <option value="010">010 - Air Law</option>
+                    <option value="021">021 - Airframe, Systems, Electrics, Power Plant</option>
+                    <option value="022">022 - Instrumentation</option>
+                    <option value="031">031 - Mass & Balance</option>
+                    <option value="032">032 - Performance</option>
+                    <option value="033">033 - Flight Planning & Monitoring</option>
+                    <option value="040">040 - Human Performance and Limitations</option>
+                    <option value="050">050 - Meteorology</option>
+                    <option value="061">061 - General Navigation</option>
+                    <option value="062">062 - Radio Navigation</option>
+                    <option value="070">070 - Operational Procedures</option>
+                    <option value="081">081 - Principles of Flight</option>
+                    <option value="090" selected>090 - Communications</option>
+                </select>
+            </div>
+            
+            <h2 id="subject-title" class="text-xl md:text-2xl text-center text-gray-700 dark:text-gray-300 mt-6">
+                <!-- Title will be set by JS -->
+            </h2>
+            
+            <!-- Exam Info Box -->
+            <div id="exam-info-box" class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mt-4 text-lg text-gray-800 dark:text-gray-200">
+                <div class="flex items-center gap-2 bg-blue-100 dark:bg-blue-900/50 px-4 py-2 rounded-lg shadow-sm">
+                    <ion-icon name="list-outline" class="text-blue-600 dark:text-blue-400"></ion-icon>
+                    <span id="exam-total-questions" class="font-medium"></span>
+                </div>
+                <div class="flex items-center gap-2 bg-blue-100 dark:bg-blue-900/50 px-4 py-2 rounded-lg shadow-sm">
+                    <ion-icon name="time-outline" class="text-blue-600 dark:text-blue-400"></ion-icon>
+                    <span id="exam-time-allowed" class="font-medium"></span>
+                </div>
+            </div>
+
+            <!-- Key Takeaway -->
+            <div class="mt-8 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 p-4 rounded-lg shadow">
+                <p class="font-bold text-lg">Study Smart: Focus on Percentage!</p>
+                <p class="mt-1">Don't be misled by the <span class="font-bold">total number</span> of questions in the QB. This chart compares each topic's <span class="font-bold">percentage share</span> of the QB versus its <span class="font-bold">percentage share</span> of the actual exam. Focus on topics where the green bar (Exam %) is higher than the red bar (QB %)!</p>
+            </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="p-4 md:p-8">
+            <div class="relative w-full h-[600px] md:h-[700px]">
+                <canvas id="examVsQbChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Data Table (for mobile and accessibility) -->
+        <div class="p-4 md:p-8 overflow-x-auto">
+            <h3 class="text-2xl font-bold text-center mb-4">Data Breakdown & Priority</h3>
+            <div class="overflow-x-auto rounded-lg shadow-md">
+                <table class="w-full min-w-[800px] text-left divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Subject</th>
+                            <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Topic Name</th>
+                            <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider text-right">QB Qs</th>
+                            <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider text-right">Exam Qs</th>
+                            <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider text-right">QB %</th>
+                            <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider text-right">Exam %</th>
+                            <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider text-right">Study Priority (Exam % / QB %)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700" id="data-table-body">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                    <tfoot class="bg-gray-100 dark:bg-gray-700 font-bold">
+                        <tr>
+                            <td class="px-4 py-4 whitespace-nowrap" colspan="2">Total</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-right" id="total-qb"></td>
+                            <td class="px-4 py-4 whitespace-nowrap text-right" id="total-exam"></td>
+                            <td class="px-4 py-4 whitespace-nowrap text-right" id="total-qb-pct"></td>
+                            <td class="px-4 py-4 whitespace-nowrap text-right" id="total-exam-pct"></td>
+                            <td class="px-4 py-4 whitespace-nowrap text-right">--</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+             <p class="text-sm text-gray-600 dark:text-gray-400 mt-3">
+                <span class="font-bold">Study Priority:</span> A value > 1.0 (Green) means the topic is more important on the exam than the QB suggests. A value < 1.0 (Red) means the QB over-represents the topic.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. All Subject Data ---
+        const allSubjectsData = {
+            "010": {
+                title: "Air Law",
+                examInfo: { time: "1:00", totalQs: 44 },
+                labels: [
+                    '010-01', '010-02', '010-04', '010-05', '010-06', '010-07', '010-08',
+                    '010-09', '010-10', '010-11', '010-12', '010-13'
+                ],
+                topicNames: [
+                    'International Law: Conventions, Agreements and Organisations',
+                    'Airworthiness of Aircraft, Aircraft Nationality and Registration Marks',
+                    'Personnel Licensing',
+                    'Rules of the Air According to ICAO Annex 2 and SERA',
+                    'Aircraft Operations',
+                    'Air Traffic Services (ATS) and Air Traffic Management (ATM)',
+                    'Aeronautical Information Service (AIS)',
+                    'Aerodromes',
+                    'Facilitation (ICAO Annex 9)',
+                    'Search and Rescue (SAR)',
+                    'Security – Safeguarding International Civil Aviation against Acts of Unlawful Interference (ICAO Annex 17)',
+                    'Aircraft Accident and Incident Investigation'
+                ],
+                qbQuestions: [76, 27, 109, 242, 343, 406, 82, 281, 51, 31, 71, 74],
+                examQuestions: [2, 1, 1, 9, 10, 6, 1, 8, 1, 1, 2, 2]
+            },
+            "021": {
+                title: "Airframe, Systems, Electrics, Power Plant",
+                examInfo: { time: "2:00", totalQs: 80 },
+                labels: [
+                    '021-01', '021-02', '021-03', '021-04', '021-05', '021-06',
+                    '021-07', '021-08', '021-09', '021-10', '021-11', '021-12', '021-13'
+                ],
+                topicNames: [
+                    'System Design, Loads, Stresses, Maintenance',
+                    'Airframe',
+                    'Hydraulics',
+                    'Landing Gear, Wheels, Tyres, Brakes',
+                    'Flight Controls',
+                    'Pneumatics - Pressurisation and Air Conditioning',
+                    'Anti-icing and De-icing Systems',
+                    'Fuel System',
+                    'Electrics',
+                    'Piston Engines',
+                    'Turbine Engines',
+                    'Protection and Detection Systems',
+                    'Oxygen Systems'
+                ],
+                qbQuestions: [77, 75, 101, 130, 141, 89, 51, 117, 261, 213, 373, 59, 77],
+                examQuestions: [2, 2, 5, 5, 8, 5, 2, 5, 15, 6, 19, 3, 3]
+            },
+            "022": {
+                title: "Instrumentation",
+                examInfo: { time: "1:30", totalQs: 60 },
+                labels: [
+                    '022-01', '022-02', '022-03', '022-04', '022-05', '022-06', '022-08', '022-09',
+                    '022-10', '022-11', '022-12', '022-13', '022-14', '022-15'
+                ],
+                topicNames: [
+                    'Sensors and Instruments',
+                    'Measurement of Air Data Parameters',
+                    'Magnetism – Direct Reading Compass and Flux Valve',
+                    'Gyroscopic Instruments',
+                    'Inertial Navigation',
+                    'Aeroplane: Automatic Flight Control Systems',
+                    'Trims – Yaw Damper – Flight Envelope Protection',
+                    'Autothrust – Automatic Thrust Control System',
+                    'Communication Systems',
+                    'Flight Management System (FMS) / Flight Management and Guidance System (FMGS)',
+                    'Alerting Systems, Proximity Systems',
+                    'Integrated Instruments – Electronic Displays',
+                    'Maintenance, Monitoring and Recording Systems',
+                    'Digital Circuits and Computers'
+                ],
+                qbQuestions: [141, 274, 109, 139, 107, 233, 83, 49, 53, 172, 236, 144, 29, 20],
+                examQuestions: [3, 8, 2, 4, 3, 11, 4, 4, 2, 6, 6, 4, 1, 1]
+            },
+            "031": {
+                title: "Mass & Balance",
+                examInfo: { time: "1:15", totalQs: 25 },
+                labels: [ '031-01', '031-02', '031-04', '031-05', '031-06' ],
+                topicNames: [
+                    'Purpose of Mass and Balance Considerations',
+                    'Loading',
+                    'Mass and Balance Details of Aircraft',
+                    'Determination of CG Position',
+                    'Cargo Handling'
+                ],
+                qbQuestions: [53, 235, 120, 186, 51],
+                examQuestions: [1, 8, 5, 9, 2]
+            },
+            "032": {
+                title: "Performance",
+                examInfo: { time: "2:00", totalQs: 45 },
+                labels: [ '032-01', '032-02', '032-03', '032-04', '032-05' ],
+                topicNames: [
+                    'General',
+                    'CS-23 / Applicable Operational Requirements Performance Class B – Theory',
+                    'CS-23 / Applicable Operational Requirements Performance Class B – Use of Aeroplane Performance Data',
+                    'CS-25 / Applicable Operational Requirements Performance Class A – Theory',
+                    'CS-25 / Applicable Operational Requirements Performance Class A – Use of Aeroplane Performance Data'
+                ],
+                qbQuestions: [ 372, 139, 147, 553, 122 ],
+                examQuestions: [ 12, 6, 3, 18, 6 ]
+            },
+            "033": {
+                title: "Flight Planning & Monitoring",
+                examInfo: { time: "2:00", totalQs: 42 },
+                labels: [ '033-01', '033-02', '033-03', '033-04', '033-05', '033-06' ],
+                topicNames: [
+                    'Flight Planning for VFR Flights',
+                    'Flight Planning for IFR Flights',
+                    'Fuel Planning – CAT.OP.MPA.106 and CAT.OP.MPA.150 plus AMC1, 2, and 3',
+                    'Pre-Flight Preparation',
+                    'ICAO Flight Plan (ATS Flight Plan (FPL))',
+                    'Flight Monitoring and In-flight Re-planning'
+                ],
+                qbQuestions: [189, 420, 406, 174, 94, 188],
+                examQuestions: [6, 13, 11, 6, 1, 5]
+            },
+            "040": {
+                title: "Human Performance and Limitations",
+                examInfo: { time: "1:30", totalQs: 48 },
+                labels: [ '040-01', '040-02', '040-03' ],
+                topicNames: [
+                    'Human Factors: Basic Concepts',
+                    'Basics of Aviation Physiology and Health Maintenance',
+                    'Basic Aviation Psychology'
+                ],
+                qbQuestions: [ 99, 815, 581 ],
+                examQuestions: [ 4, 24, 20 ]
+            },
+            "050": {
+                title: "Meteorology",
+                examInfo: { time: "2:00", totalQs: 84 },
+                labels: [
+                    '050-01', '050-02', '050-03', '050-04', '050-05',
+                    '050-06', '050-07', '050-08', '050-09', '050-10'
+                ],
+                topicNames: [
+                    'The Atmosphere',
+                    'Wind',
+                    'Thermodynamics',
+                    'Clouds and Fog',
+                    'Precipitation',
+                    'Air Masses and Fronts',
+                    'Pressure Systems',
+                    'Climatology',
+                    'Flight Hazards',
+                    'Meteorological Information'
+                ],
+                qbQuestions: [ 361, 298, 148, 218, 60, 193, 138, 212, 379, 514 ],
+                examQuestions: [ 10, 10, 3, 8, 2, 7, 6, 8, 14, 16 ]
+            },
+            "061": {
+                title: "General Navigation",
+                examInfo: { time: "2:15", totalQs: 55 },
+                labels: [ '061-01', '061-02', '061-03', '061-04', '061-05' ],
+                topicNames: [
+                    'Basics of Navigation',
+                    'Visual Flight Rule (VFR) Navigation',
+                    'Great Circles and Rhumb Lines',
+                    'Charts',
+                    'Time'
+                ],
+                qbQuestions: [760, 107, 107, 358, 111],
+                examQuestions: [28, 7, 5, 12, 3]
+            },
+            "062": {
+                title: "Radio Navigation",
+                examInfo: { time: "1:30", totalQs: 66 },
+                labels: [ '062-01', '062-02', '062-03', '062-06', '062-07' ],
+                topicNames: [
+                    'Basic Radio Propagation Theory',
+                    'Radio Aids',
+                    'Radar',
+                    'Global Navigation Satellite Systems (GNSSs)',
+                    'Performance Based Navigation (PBN)'
+                ],
+                qbQuestions: [ 145, 587, 178, 179, 192 ],
+                examQuestions: [ 5, 22, 11, 15, 13 ]
+            },
+            "070": {
+                title: "Operational Procedures",
+                examInfo: { time: "1:15", totalQs: 42 },
+                labels: [ '071-01', '071-02', '071-04' ],
+                topicNames: [
+                    'General Requirements',
+                    'Special Operational Procedures and Hazards (General Aspects)',
+                    'Specialised Operations'
+                ],
+                qbQuestions: [ 730, 590, 6 ],
+                examQuestions: [ 17, 24, 1 ]
+            },
+            "081": {
+                title: "Principles of Flight",
+                examInfo: { time: "1:30", totalQs: 46 },
+                labels: [
+                    '081-01', '081-02', '081-03', '081-04', '081-05', '081-06', '081-07', '081-08'
+                ],
+                topicNames: [
+                    'Subsonic Aerodynamics',
+                    'High Speed Aerodynamics',
+                    'Stall, Mach Tuck and Upset Prevention and Recovery',
+                    'Stability',
+                    'Control',
+                    'Limitations',
+                    'Propellers',
+                    'Flight Mechanics'
+                ],
+                qbQuestions: [711, 237, 300, 218, 194, 176, 196, 362],
+                examQuestions: [14, 4, 9, 4, 3, 3, 4, 5]
+            },
+            "090": {
+                title: "Communications",
+                examInfo: { time: "1:00", totalQs: 34 },
+                labels: [ '090-01', '090-02', '090-03', '090-04', '090-05', '090-06', '090-07' ],
+                topicNames: [
+                    'Concepts',
+                    'General Operating Procedures',
+                    'Relevant Weather Information',
+                    'Voice Communication Failure',
+                    'Distress and Urgency Procedures',
+                    'VHF Propagation and Allocation of Frequencies',
+                    'Other Communications'
+                ],
+                qbQuestions: [ 109, 529, 80, 93, 107, 93, 33 ],
+                examQuestions: [ 4, 17, 2, 4, 3, 2, 2 ]
+            }
+        };
+
+        // --- 2. Chart Initialization ---
+        const ctx = document.getElementById('examVsQbChart').getContext('2d');
+        const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const labelColor = isDarkMode ? '#e5e7eb' : '#1f2937'; // gray-200 or gray-800
+
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [], // Will be populated by update function
+                datasets: [
+                    {
+                        label: '% of Question Bank',
+                        data: [], // Will be populated by update function
+                        backgroundColor: 'rgba(239, 68, 68, 0.7)', // Red
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: '% of Actual Exam',
+                        data: [], // Will be populated by update function
+                        backgroundColor: 'rgba(34, 197, 94, 0.7)', // Green
+                        borderColor: 'rgba(34, 197, 94, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'QB Percentage vs. Actual Exam Percentage',
+                        font: { size: 20, weight: 'bold' },
+                        color: labelColor,
+                        padding: { bottom: 20 }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const subjectKey = document.getElementById('subjectSelector').value;
+                                const data = allSubjectsData[subjectKey];
+                                const index = tooltipItems[0].dataIndex;
+                                return `${data.labels[index]}: ${data.topicNames[index]}`;
+                            },
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) { label += ': '; }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toFixed(1) + '%';
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    legend: {
+                        display: true, // Ensured legend is visible
+                        position: 'bottom',
+                        labels: { color: labelColor, font: { size: 14 } }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Percentage of Total (%)',
+                            color: labelColor,
+                            font: { size: 16 }
+                        },
+                        grid: { color: gridColor },
+                        ticks: {
+                            color: labelColor,
+                            callback: value => value + '%'
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            color: labelColor,
+                            font: { size: 12, weight: 'bold' },
+                            callback: function(value, index, values) {
+                                const subjectKey = document.getElementById('subjectSelector').value;
+                                return allSubjectsData[subjectKey].labels[index];
+                            }
+                        }
+                    }
+                }
+            }
+        });
+ 
+        // --- 3. Update Function ---
+        function updateInfographic(subjectKey) {
+            const data = allSubjectsData[subjectKey];
+            if (!data) return;
+
+            // Update page title
+            document.getElementById('subject-title').textContent = data.title;
+            
+            // Update Exam Info Box
+            document.getElementById('exam-total-questions').textContent = `${data.examInfo.totalQs} Questions`;
+            document.getElementById('exam-time-allowed').textContent = `Time: ${data.examInfo.time}`;
+
+            // Calculate percentages
+            const tableBody = document.getElementById('data-table-body');
+            tableBody.innerHTML = ''; // Clear existing table rows
+            
+            const totalQb = data.qbQuestions.reduce((a, b) => a + b, 0);
+            const totalExam = data.examQuestions.reduce((a, b) => a + b, 0);
+
+            const qbPercentages = [];
+            const examPercentages = [];
+
+            data.labels.forEach((label, index) => {
+                const qbCount = data.qbQuestions[index];
+                const examCount = data.examQuestions[index];
+                
+                const qbPct = (qbCount / totalQb) * 100;
+                const examPct = (examCount / totalExam) * 100;
+                const priority = (qbPct > 0) ? (examPct / qbPct) : 0;
+
+                qbPercentages.push(qbPct);
+                examPercentages.push(examPct);
+
+                // Populate table
+                const row = document.createElement('tr');
+                row.className = index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-700/50';
+                
+                let priorityClass = 'text-gray-700 dark:text-gray-300';
+                if (priority > 1.1) {
+                    priorityClass = 'text-green-600 dark:text-green-400 font-bold';
+                } else if (priority < 0.9) {
+                    priorityClass = 'text-red-600 dark:text-red-400 font-bold';
+                }
+
+                row.innerHTML = `
+                    <td class="px-4 py-4 whitespace-nowrap font-medium">${label}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm">${data.topicNames[index]}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-right">${qbCount}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-right font-bold">${examCount}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-right text-red-600 dark:text-red-400">${qbPct.toFixed(1)}%</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-right text-green-600 dark:text-green-400 font-bold">${examPct.toFixed(1)}%</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-right ${priorityClass}">${priority.toFixed(2)}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Update table footer
+            document.getElementById('total-qb').textContent = totalQb;
+            document.getElementById('total-exam').textContent = totalExam;
+            document.getElementById('total-qb-pct').textContent = '100.0%';
+            document.getElementById('total-exam-pct').textContent = '100.0%';
+
+            // Update chart data
+            myChart.data.labels = data.labels.map((label, i) => [label, data.topicNames[i]]);
+            myChart.data.datasets[0].data = qbPercentages;
+            myChart.data.datasets[1].data = examPercentages;
+            myChart.update();
+        }
+
+        // --- 4. Event Listener ---
+        document.getElementById('subjectSelector').addEventListener('change', (e) => {
+            updateInfographic(e.target.value);
+        });
+
+        // --- 4. Event Listener ---
+        document.getElementById('subjectSelector').addEventListener('change', (e) => {
+            updateInfographic(e.target.value);
+        });
+
+        // Initial load
+        updateInfographic('090');
+
+    </script>
+
+</body>
+</html>
